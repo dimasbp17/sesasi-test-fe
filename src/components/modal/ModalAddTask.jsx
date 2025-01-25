@@ -1,6 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import React, { useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { IoClose } from 'react-icons/io5';
 import { statusTask } from '../../data/constant/statusTask';
 import { taskValidationSchema } from '../../lib/validations/taskValidation';
@@ -9,6 +9,7 @@ import Input from '../input/Input';
 const ModalAddTask = ({ open, onClose, onAdd }) => {
   const [formData, setFormData] = useState({ name: '', status: '' });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -39,11 +40,13 @@ const ModalAddTask = ({ open, onClose, onAdd }) => {
   const handleAdd = async () => {
     const isValid = await validate();
     if (isValid) {
+      setLoading(true);
       await onAdd({ ...formData });
       toast.success('Add task success');
       setFormData({ name: '', status: '' });
       setErrors({});
       onClose();
+      setLoading(false);
     }
   };
 
@@ -115,7 +118,7 @@ const ModalAddTask = ({ open, onClose, onAdd }) => {
             variant="contained"
             className="!bg-biru !text-white !capitalize"
           >
-            Add Task
+            {loading ? 'Loading...' : 'Add Task'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,13 +1,14 @@
 import { Button, Dialog, DialogActions, DialogContent } from '@mui/material';
 import React, { useState } from 'react';
+import toast from 'react-hot-toast';
 import { IoClose } from 'react-icons/io5';
 import { projectValidationSchema } from '../../lib/validations/projectValidation';
 import Input from '../input/Input';
-import toast, { Toaster } from 'react-hot-toast';
 
 const ModalAddProject = ({ open, onClose, onAdd }) => {
   const [formData, setFormData] = useState({ name: '', description: '' });
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,11 +34,13 @@ const ModalAddProject = ({ open, onClose, onAdd }) => {
   const handleAdd = async () => {
     const isValid = await validate();
     if (isValid) {
+      setLoading(true);
       await onAdd({ ...formData });
       toast.success('Add project success');
       setFormData({ name: '', description: '' });
       setErrors({});
       onClose();
+      setLoading(false);
     }
   };
 
@@ -88,11 +91,11 @@ const ModalAddProject = ({ open, onClose, onAdd }) => {
           </Button>
           <Button
             onClick={handleAdd}
-            color="primary"
             variant="contained"
             className="!bg-biru !text-white !capitalize"
+            disabled={loading}
           >
-            Add Project
+            {loading ? 'Loading...' : 'Add Project'}
           </Button>
         </DialogActions>
       </Dialog>
